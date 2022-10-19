@@ -1,5 +1,4 @@
 from random import choice, randint
-import math
 
 class player():
     def __init__(self, name="", piece=""):
@@ -166,10 +165,30 @@ while True:
     if juego.inputColumn() == "win":
         print(juego.getTable())
         print(f"¡Felicidades, {juego.turno.name}, has ganado la partida!")
-        if input("¿Desean volver a tomar la partida Si [S] No [N]?:") == "N":
+        while True:
+            ans = input("¿Desean volver a tomar la partida Si [S] No [N]?:")
+            if ans == "N":
+                break
+            elif ans == "S":
+                juego = game(p1, p2)
+                break
+            else:
+                print("Debes ingresar Si [S] No [N]")
+        if ans == "N":
+            ans = "S"
             break
     if (juego.checkFull()):
         print(juego.getTable())
         print("El tablero está lleno, no se pueden hacer más jugadas, tenemos un empate")
-        if input("¿Desean volver a tomar la partida Si [S] No [N]?:") == "N":
+        while True:
+            ans = input("¿Desean volver a tomar la partida Si [S] No [N]?:")
+            if ans == "N":
+                break
+            elif ans == "S":
+                juego = game(p1, p2)
+                break
+            else:
+                print("Debes ingresar Si [S] No [N]")
+        if ans == "N":
+            ans = "S"
             break

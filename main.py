@@ -68,13 +68,14 @@ class game():
                         elif comprobacion:
                             break
                         else:
-                            print("Esta columna está llena")
+                            print("Esta columna está llena...")
+                            print(f"El jugador {self.turno.name} pierde el turno")
+                            break
                     else:
                         print("Debes ingresar un número entre 1 y 7")
                 except ValueError:
                     print("Debes ingresar un número")
         self.turno = self.p1 if self.turno == self.p2 else self.p2
-        return None
 
     def checkFull(self):
         full = True
@@ -85,9 +86,6 @@ class game():
         return full
 
     def checkWin(self, row, column):
-
-        print(f"C: {column} R: {row}")
-
         win = False
 
         # Verificar fila
@@ -149,7 +147,6 @@ class game():
                 pi[0] -= 1
                 pi[1] += 1
 
-        print("Win:", win)
         return win
 
 
@@ -169,9 +166,10 @@ while True:
     if juego.inputColumn() == "win":
         print(juego.getTable())
         print(f"¡Felicidades, {juego.turno.name}, has ganado la partida!")
-        break
+        if input("¿Desean volver a tomar la partida Si [S] No [N]?:") == "N":
+            break
     if (juego.checkFull()):
         print(juego.getTable())
         print("El tablero está lleno, no se pueden hacer más jugadas, tenemos un empate")
-        break
-        
+        if input("¿Desean volver a tomar la partida Si [S] No [N]?:") == "N":
+            break

@@ -1,4 +1,6 @@
 from random import choice, randint
+import json
+from datetime import datetime
 
 class player():
     def __init__(self, name="", piece=""):
@@ -18,6 +20,43 @@ class game():
         self.p1 = p1
         self.p2 = p2
         self.turno = choice((p1,p2))
+
+    def showScoreTable(self):
+        with open("scores.json", "r") as f:
+            data = json.loads(f.read())
+
+        ordered_names = list(data.keys())
+        for i in range(len(ordered_names)):
+            for j in range(len(ordered_names)-1):
+                if data[ordered_names[j]]['score'] < data[ordered_names[j+1]]['score']:
+                    ordered_names[j], ordered_names[j+1] = ordered_names[j+1], ordered_names[j]
+
+        print("\n*** TABLA DE POSICIONES ***\n")
+        for i in range(len(ordered_names)):
+            print(f"{i+1}. {ordered_names[i]} {data[ordered_names[i]]['score']} puntos acumulados. Última partida en {data[ordered_names[i]]['date']}")
+        print()
+
+
+
+    def updateScores(self, win:bool = False):
+        with open("scores.json", "r") as f:
+            data = json.loads(f.read())
+
+        # Update when win
+        if win:
+            if data.get(self.turno.name):
+                data[self.turno.name]['score'] += 1
+            else:
+                data[self.turno.name] = {'score': 1, 'date': datetime.now().strftime('%Y-%m-%d a las %H:%M')}
+
+        # Always update to create new users
+        if not data.get(self.p1.name):
+            data[self.p1.name] = {'score': 0, 'date': datetime.now().strftime('%Y-%m-%d a las %H:%M')}
+        if not data.get(self.p2.name):
+            data[self.p2.name] = {'score': 0, 'date': datetime.now().strftime('%Y-%m-%d a las %H:%M')}
+
+        with open("scores.json", "w") as f:
+            f.write(json.dumps(data))
 
     def getTable(self):
         tableStr = " 1234567 \n+-------+\n"
@@ -165,6 +204,9 @@ while True:
     if juego.inputColumn() == "win":
         print(juego.getTable())
         print(f"¡Felicidades, {juego.turno.name}, has ganado la partida!")
+        print("Has sumado 1 punto esta partida! :D")
+        juego.updateScores(win=True)
+        juego.showScoreTable()
         while True:
             ans = input("¿Desean volver a tomar la partida Si [S] No [N]?:")
             if ans == "N":
@@ -175,11 +217,12 @@ while True:
             else:
                 print("Debes ingresar Si [S] No [N]")
         if ans == "N":
-            ans = "S"
             break
     if (juego.checkFull()):
         print(juego.getTable())
         print("El tablero está lleno, no se pueden hacer más jugadas, tenemos un empate")
+        juego.updateScores()
+        juego.showScoreTable()
         while True:
             ans = input("¿Desean volver a tomar la partida Si [S] No [N]?:")
             if ans == "N":
@@ -190,5 +233,4 @@ while True:
             else:
                 print("Debes ingresar Si [S] No [N]")
         if ans == "N":
-            ans = "S"
             break
